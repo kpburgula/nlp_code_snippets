@@ -16,7 +16,7 @@ elastic_search = Elasticsearch([{'host': 'localhost', 'port': 9200}])
 # if es.indices.exists(index="myindex"):
 #     es.indices.delete(index='myindex', ignore=[400, 404])
 
-def get_file_name():
+def get_data():
 
     """
     This function downloads the required data to test elasticsearch and searching mechanism
@@ -68,7 +68,7 @@ class Indexing:
 
 
 if __name__ == '__main__':
-    file_name = get_file_name()
+    get_data()
     instance = Indexing("booksummaries/booksummaries.txt", elastic_search)
     instance.build_index(index_count= 1000)
 

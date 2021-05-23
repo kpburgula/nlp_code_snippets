@@ -16,7 +16,7 @@ def tokenized_outputs(texts):
                     max_length=max_length,  # max length of the text that can go to BERT
                     pad_to_max_length=True,  # add [PAD] tokens
                     return_attention_mask=True,
-                    return_tensors='tf')
+                    return_tensors='tf') # tf for tensorflow, pt for pytorch
 
 # Load the fine tuned model
 loaded_model = TFBertForSequenceClassification.from_pretrained("/tmp")
