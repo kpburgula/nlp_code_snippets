@@ -4,6 +4,7 @@ import os
 import torch
 from transformers import T5Tokenizer, T5ForConditionalGeneration, T5Config
 
+
 def get_data():
     """
     This function downloads the required data to test a text summarization technique
@@ -35,28 +36,27 @@ def prepare_data(data_path):
 
 class TextSummarizer:
 
-    def __init__(self, text):
-        self.text = text
+    def __init__(self):
+        self.model = T5ForConditionalGeneration.from_pretrained('t5-small')
+        self.tokenizer = T5Tokenizer.from_pretrained('t5-small')
 
-    def get_abstractive_summarizer(self):
-        model = T5ForConditionalGeneration.from_pretrained('t5-small')
-        tokenizer = T5Tokenizer.from_pretrained('t5-small')
-        preprocess_text = self.text.strip().replace("\n", "")
-        tokenized_text = tokenizer.encode(preprocess_text, return_tensors="pt") #pt for pytorch
-        summary_ids = model.generate(tokenized_text,
-                                     num_beams=4,
-                                     no_repeat_ngram_size=2,
-                                     min_length=30,
-                                     max_length=100,
-                                     early_stopping=True)
-        output = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+    def get_abstractive_summarizer(self, raw_text):
+        preprocess_text = raw_text.strip().replace("\n", "")
+        tokenized_text = self.tokenizer.encode(preprocess_text, return_tensors="pt")  # pt for pytorch
+        summary_ids = self.model.generate(tokenized_text,
+                                          num_beams=4,
+                                          no_repeat_ngram_size=2,
+                                          min_length=30,
+                                          max_length=100,
+                                          early_stopping=True)
+        output = self.tokenizer.decode(summary_ids[0], skip_special_tokens=True)
 
-        return self.text, output
+        return output
 
 
 if __name__ == "__main__":
     get_data()
     text = list(prepare_data("booksummaries/booksummaries.txt").values())[0]
-    instance = TextSummarizer(text)
-    print(instance.get_abstractive_summarizer())
-    print('_'*50)
+    instance = TextSummarizer()
+    print(instance.get_abstractive_summarizer(text))
+    print('_' * 50)
